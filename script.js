@@ -21,7 +21,6 @@ function buildSidebar(sections) {
     a.href = "#" + section.id;
     a.className = "sidebar-link";
     a.dataset.target = section.id;
-
     a.textContent = section.category;
 
     a.addEventListener("click", e => {
@@ -41,16 +40,23 @@ function buildSections(sections) {
   const container = document.getElementById("sections-container");
 
   sections.forEach(section => {
-    const card = document.createElement("div");
-    card.className = "doc-section";
-    card.id = section.id;
+    const group = document.createElement("div");
+    group.className = "section-group";
+    group.id = section.id;
 
-    section.blocks.forEach(block => {
-      const el = renderBlock(block);
-      if (el) card.appendChild(el);
+    section.cards.forEach(card => {
+      const cardEl = document.createElement("div");
+      cardEl.className = "doc-section";
+
+      card.blocks.forEach(block => {
+        const el = renderBlock(block);
+        if (el) cardEl.appendChild(el);
+      });
+
+      group.appendChild(cardEl);
     });
 
-    container.appendChild(card);
+    container.appendChild(group);
   });
 }
 
@@ -138,7 +144,7 @@ function initSearch() {
     }
 
     const matches = sections.filter(s => {
-      const text = s.blocks.map(b => b.content).join(" ").toLowerCase();
+      const text = s.cards.flatMap(c => c.blocks.map(b => b.content)).join(" ").toLowerCase();
       return s.category.toLowerCase().includes(q) || text.includes(q);
     });
 
@@ -157,7 +163,7 @@ function initSearch() {
 
       const preview = document.createElement("span");
       preview.className = "result-preview";
-      const textBlock = m.blocks.find(b => b.type === "text");
+      const textBlock = m.cards[0].blocks.find(b => b.type === "text");
       preview.textContent = textBlock ? textBlock.content.slice(0, 60) + "…" : "";
 
       item.appendChild(name);
@@ -189,10 +195,10 @@ function initSearch() {
 
 function highlightActiveSection() {
   const links = document.querySelectorAll(".sidebar-link");
-  const sections = document.querySelectorAll(".doc-section");
+  const groups = document.querySelectorAll(".section-group");
   let current = "";
 
-  sections.forEach(s => {
+  groups.forEach(s => {
     if (s.getBoundingClientRect().top <= 130) current = s.id;
   });
 
@@ -200,4 +206,3 @@ function highlightActiveSection() {
     link.classList.toggle("active", link.dataset.target === current);
   });
 }
-
