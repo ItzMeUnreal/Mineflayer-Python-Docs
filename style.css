@@ -20,7 +20,7 @@
   --search-height: 50px;
   --font: 'IBM Plex Mono', monospace;
   scrollbar-color: var(--border) transparent;
-  scrollbar-width: thin;
+  scrollbar-width: auto;
 }
 
 html {
@@ -218,7 +218,13 @@ body {
 #sections-container {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 40px;
+}
+
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .doc-section {
